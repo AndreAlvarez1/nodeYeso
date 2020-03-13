@@ -28,7 +28,6 @@ export default class Server {
         // Config Sockets
         this.httpServer   = new http.Server( this.app );
         this.io           = socketIO( this.httpServer )
-
         // this.escucharSockets();
     }
 
