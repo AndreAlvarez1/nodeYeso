@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = require("express");
-const server_1 = require("../classes/server");
-const router = express_1.Router();
+var express_1 = require("express");
+var server_1 = require("../classes/server");
+var router = express_1.Router();
 /////=============================================/////
 /////=============================================/////
 /////=================== GETS ====================/////
 /////=============================================/////
 /////=============================================/////
 router.get('/codigo/:tabla', function (req, res) {
-    const query = "SELECT CODIGO FROM " + req.params.tabla + " ORDER BY CODIGO DESC LIMIT 1";
+    var query = "SELECT CODIGO FROM " + req.params.tabla + " ORDER BY CODIGO DESC LIMIT 1";
     server_1.conex.query(query, function (err, rows, fields) {
         if (err)
             throw err;
@@ -17,7 +17,7 @@ router.get('/codigo/:tabla', function (req, res) {
     });
 });
 router.get('/tablas/:tabla', function (req, res) {
-    const query = "SELECT * FROM " + req.params.tabla + " ";
+    var query = "SELECT * FROM " + req.params.tabla + " ";
     console.log(query);
     server_1.conex.query(query, function (err, rows, fields) {
         if (err)
@@ -26,7 +26,7 @@ router.get('/tablas/:tabla', function (req, res) {
     });
 });
 router.get('/niveles', function (req, res) {
-    const query = "SELECT N.CODIGO, N.IDOBRA, I.INAME, N.IDINMUEBLE, N.NNAME, N.ESTADO FROM NIVELES N LEFT JOIN INMUEBLES I ON N.IDINMUEBLE = I.CODIGO WHERE N.ESTADO = 1";
+    var query = "SELECT N.CODIGO, N.IDOBRA, I.INAME, N.IDINMUEBLE, N.NNAME, N.ESTADO FROM NIVELES N LEFT JOIN INMUEBLES I ON N.IDINMUEBLE = I.CODIGO WHERE N.ESTADO = 1";
     server_1.conex.query(query, function (err, rows, fields) {
         if (err)
             throw err;
@@ -34,7 +34,7 @@ router.get('/niveles', function (req, res) {
     });
 });
 router.get('/unidades/:obra', function (req, res) {
-    const query = "SELECT U.CODIGO,U.UNAME, U.IDOBRA, U.IDINMUEBLE, I.INAME, U.IDNIVEL, N.NNAME, U.TIPO, U.DESCRIPCION, U.COMPLETADO  FROM UNIDADES U LEFT JOIN INMUEBLES I ON U.IDINMUEBLE = I.CODIGO LEFT JOIN NIVELES N ON U.IDNIVEL = N.CODIGO WHERE U.ESTADO = 1 && U.IDOBRA = '" + req.params.obra + "'";
+    var query = "SELECT U.CODIGO,U.UNAME, U.IDOBRA, U.IDINMUEBLE, I.INAME, U.IDNIVEL, N.NNAME, U.TIPO, U.DESCRIPCION, U.COMPLETADO  FROM UNIDADES U LEFT JOIN INMUEBLES I ON U.IDINMUEBLE = I.CODIGO LEFT JOIN NIVELES N ON U.IDNIVEL = N.CODIGO WHERE U.ESTADO = 1 && U.IDOBRA = '" + req.params.obra + "'";
     server_1.conex.query(query, function (err, rows, fields) {
         if (err)
             throw err;
@@ -42,7 +42,7 @@ router.get('/unidades/:obra', function (req, res) {
     });
 });
 router.get('/unidad/:obra/:unidad', function (req, res) {
-    const query = "SELECT U.CODIGO,U.UNAME, U.IDOBRA, U.IDINMUEBLE, I.INAME, U.IDNIVEL, N.NNAME, U.TIPO, U.DESCRIPCION, U.COMPLETADO FROM UNIDADES U LEFT JOIN INMUEBLES I ON U.IDINMUEBLE = I.CODIGO LEFT JOIN NIVELES N ON U.IDNIVEL = N.CODIGO WHERE U.ESTADO = 1 && U.IDOBRA = '" + req.params.obra + "' && U.CODIGO = '" + req.params.unidad + "'  ";
+    var query = "SELECT U.CODIGO,U.UNAME, U.IDOBRA, U.IDINMUEBLE, I.INAME, U.IDNIVEL, N.NNAME, U.TIPO, U.DESCRIPCION, U.COMPLETADO FROM UNIDADES U LEFT JOIN INMUEBLES I ON U.IDINMUEBLE = I.CODIGO LEFT JOIN NIVELES N ON U.IDNIVEL = N.CODIGO WHERE U.ESTADO = 1 && U.IDOBRA = '" + req.params.obra + "' && U.CODIGO = '" + req.params.unidad + "'  ";
     server_1.conex.query(query, function (err, rows, fields) {
         if (err)
             throw err;
@@ -50,7 +50,7 @@ router.get('/unidad/:obra/:unidad', function (req, res) {
     });
 });
 router.get('/operaxuni/:obra', function (req, res) {
-    const query = "SELECT O.ID, O.IDUNIDAD, U.UNAME, U.IDOBRA, O.IDOPERACION, OPE.NOMBRE AS OPERACION, OPE.UNIDAD, PRE.PRECIO, O.META, O.PROGRESO, O.CREADO, O.ACTUALIZADO, O.REVISOR, OP.NOMBRE, OP.APELLIDO, OP.APELLIDOMAT, O.COMPLETADO, O.ESTADO FROM OPERAXUNI O LEFT JOIN OPERARIOS OP ON O.REVISOR = OP.RUT LEFT JOIN UNIDADES U ON O.IDUNIDAD = U.CODIGO LEFT JOIN OPERACIONES OPE ON O.IDOPERACION = OPE.ID INNER JOIN PRECIOS PRE ON O.IDOPERACION = PRE.IDOPERACION && U.IDOBRA = PRE.IDOBRA WHERE O.ESTADO != 0 && U.IDOBRA = '" + req.params.obra + "' ";
+    var query = "SELECT O.ID, O.IDUNIDAD, U.UNAME, U.IDOBRA, O.IDOPERACION, OPE.NOMBRE AS OPERACION, OPE.UNIDAD, PRE.PRECIO, O.META, O.PROGRESO, O.CREADO, O.ACTUALIZADO, O.REVISOR, OP.NOMBRE, OP.APELLIDO, OP.APELLIDOMAT, O.COMPLETADO, O.ESTADO FROM OPERAXUNI O LEFT JOIN OPERARIOS OP ON O.REVISOR = OP.RUT LEFT JOIN UNIDADES U ON O.IDUNIDAD = U.CODIGO LEFT JOIN OPERACIONES OPE ON O.IDOPERACION = OPE.ID INNER JOIN PRECIOS PRE ON O.IDOPERACION = PRE.IDOPERACION && U.IDOBRA = PRE.IDOBRA WHERE O.ESTADO != 0 && U.IDOBRA = '" + req.params.obra + "' ";
     server_1.conex.query(query, function (err, rows, fields) {
         if (err)
             throw err;
@@ -58,7 +58,7 @@ router.get('/operaxuni/:obra', function (req, res) {
     });
 });
 router.get('/pegas/verificaID', function (req, res) {
-    const query = "SELECT ID FROM OPERAXUNI";
+    var query = "SELECT ID FROM OPERAXUNI";
     server_1.conex.query(query, function (err, rows, fields) {
         if (err)
             throw err;
@@ -66,7 +66,7 @@ router.get('/pegas/verificaID', function (req, res) {
     });
 });
 router.get('/obras/:id', function (req, res) {
-    const query = "SELECT * FROM OBRAS WHERE CODIGO = '" + req.params.id + "' ";
+    var query = "SELECT * FROM OBRAS WHERE CODIGO = '" + req.params.id + "' ";
     server_1.conex.query(query, function (err, rows, fields) {
         if (err)
             throw err;
@@ -74,7 +74,7 @@ router.get('/obras/:id', function (req, res) {
     });
 });
 router.get('/operarios/:id', function (req, res) {
-    const query = "SELECT * FROM OPERARIOS WHERE RUT = '" + req.params.id + "' ";
+    var query = "SELECT * FROM OPERARIOS WHERE RUT = '" + req.params.id + "' ";
     console.log('query ->', query);
     server_1.conex.query(query, function (err, rows, fields) {
         if (err)
@@ -83,7 +83,7 @@ router.get('/operarios/:id', function (req, res) {
     });
 });
 router.get('/operaciones/:obra', function (req, res) {
-    const query = "SELECT P.ID AS ID, O.ID AS OPERACIONID, O.NOMBRE, O.UNIDAD, P.ID AS PRECIOID, P.IDOBRA, P.PRECIO FROM  OPERACIONES O INNER JOIN PRECIOS P ON O.ID = P.IDOPERACION WHERE P.IDOBRA = '" + req.params.obra + "' ";
+    var query = "SELECT P.ID AS ID, O.ID AS OPERACIONID, O.NOMBRE, O.UNIDAD, P.ID AS PRECIOID, P.IDOBRA, P.PRECIO FROM  OPERACIONES O INNER JOIN PRECIOS P ON O.ID = P.IDOPERACION WHERE P.IDOBRA = '" + req.params.obra + "' ";
     console.log('query ->', query);
     server_1.conex.query(query, function (err, rows, fields) {
         if (err)
@@ -97,7 +97,7 @@ router.get('/operaciones/:obra', function (req, res) {
 /////=============================================/////
 /////=============================================/////
 router.post('/obras/:tarea', function (req, res) {
-    let query = '';
+    var query = '';
     if (req.params.tarea === 'insert') {
         query = "INSERT INTO OBRAS (CODIGO, OBRANAME, FECHAINI, RESPONSABLE, REGION, COMUNA, DIRECCION,ESTADO) VALUES ('" + req.body.CODIGO + "', '" + req.body.OBRANAME + "', '" + req.body.FECHAINI + "', '" + req.body.RESPONSABLE + "', '" + req.body.REGION + "', '" + req.body.COMUNA + "', '" + req.body.DIRECCION + "', '" + req.body.ESTADO + "')";
     }
@@ -113,7 +113,7 @@ router.post('/obras/:tarea', function (req, res) {
 });
 router.post('/operarios/:tarea', function (req, res) {
     console.log('tarea', req.params.tarea);
-    let query = '';
+    var query = '';
     if (req.params.tarea === 'insert') {
         console.log('body de imprimir', req.body);
         query = "INSERT INTO OPERARIOS (RUT, NOMBRE, APELLIDO, APELLIDOMAT, CEL, TIPO, ESTADO) VALUES ('" + req.body.RUT + "', '" + req.body.NOMBRE + "', '" + req.body.APELLIDO + "', '" + req.body.APELLIDOMAT + "', '" + req.body.CEL + "', '" + req.body.TIPO + "', '" + req.body.ESTADO + "')";
@@ -136,7 +136,7 @@ router.post('/operarios/:tarea', function (req, res) {
 });
 router.post('/inmuebles/:tarea', function (req, res) {
     console.log('tarea', req.params.tarea);
-    let query = '';
+    var query = '';
     if (req.params.tarea === 'insert') {
         console.log('body de imprimir', req.body);
         query = "INSERT INTO INMUEBLES (CODIGO, IDOBRA, INAME, ESTADO) VALUES ('" + req.body.CODIGO + "', '" + req.body.IDOBRA + "', '" + req.body.INAME + "', 1)";
@@ -159,7 +159,7 @@ router.post('/inmuebles/:tarea', function (req, res) {
 });
 router.post('/niveles/:tarea', function (req, res) {
     console.log('tarea', req.params.tarea);
-    let query = '';
+    var query = '';
     if (req.params.tarea === 'insert') {
         console.log('body de imprimir', req.body);
         query = "INSERT INTO NIVELES (CODIGO, IDOBRA, IDINMUEBLE, NNAME, ESTADO) VALUES ('" + req.body.CODIGO + "', '" + req.body.IDOBRA + "','" + req.body.IDINMUEBLE + "', '" + req.body.NNAME + "', 1)";
@@ -182,7 +182,7 @@ router.post('/niveles/:tarea', function (req, res) {
 });
 router.post('/unidades/:tarea', function (req, res) {
     console.log('tarea', req.params.tarea);
-    let query = '';
+    var query = '';
     if (req.params.tarea === 'insert') {
         console.log('body de imprimir', req.body);
         query = "INSERT INTO UNIDADES (CODIGO, IDOBRA, IDINMUEBLE, IDNIVEL, UNAME, TIPO, DESCRIPCION, COMPLETADO, ESTADO) VALUES ('" + req.body.CODIGO + "', '" + req.body.IDOBRA + "','" + req.body.IDINMUEBLE + "','" + req.body.IDNIVEL + "', '" + req.body.UNAME + "','" + req.body.TIPO + "','" + req.body.DESCRIPCION + "', 0, 1)";
@@ -208,7 +208,7 @@ router.post('/unidades/:tarea', function (req, res) {
 });
 router.post('/operaxuni/:tarea', function (req, res) {
     console.log('pega', req.params.tarea);
-    let query = '';
+    var query = '';
     if (req.params.tarea === 'insert') {
         console.log('body de imprimir', req.body);
         query = "INSERT INTO OPERAXUNI (IDUNIDAD, IDOPERACION, META, PROGRESO, CREADO, ACTUALIZADO, COMPLETADO, ESTADO) VALUES ('" + req.body.IDUNIDAD + "', '" + req.body.IDOPERACION + "','" + req.body.META + "','" + req.body.PROGRESO + "', '" + req.body.CREADO + "', '" + req.body.ACTUALIZADO + "','" + req.body.COMPLETADO + "','" + req.body.ESTADO + "')";
@@ -231,7 +231,7 @@ router.post('/operaxuni/:tarea', function (req, res) {
 });
 router.post('/precios/:tarea', function (req, res) {
     console.log('precio', req.params.tarea);
-    let query = '';
+    var query = '';
     if (req.params.tarea === 'insert') {
         console.log('body de imprimir', req.body);
         query = "INSERT INTO PRECIOS ( IDOPERACION, IDOBRA, PRECIO ) VALUES ('" + req.body.IDOPERACION + "', '" + req.body.IDOBRA + "','" + req.body.PRECIO + "')";
@@ -251,13 +251,13 @@ router.post('/precios/:tarea', function (req, res) {
 });
 router.post('/trabajo', function (req, res) {
     console.log("Grabo trabajos", req.body);
-    let DATOS = '';
-    for (let x in req.body) {
+    var DATOS = '';
+    for (var x in req.body) {
         DATOS += "( '" + req.body[x].RUT + "'," + req.body[x].IDOPERACION + "," + req.body[x].PRECIO + "," + req.body[x].PORCENTAJE + "," + req.body[x].CANTIDAD + "," + req.body[x].TOTAL + ",'" + req.body[x].IDUNIDAD + "','" + req.body[x].FECHA + "','" + req.body[x].REVISOR + "'),";
     }
     DATOS = DATOS.slice(0, -1);
     console.log(DATOS);
-    const query = "INSERT INTO TRAREALIZADOS ( RUT, IDOPERACION, PRECIO, PORCENTAJE, CANTIDAD, TOTAL, IDUNIDAD, FECHA, REVISOR ) VALUES" + DATOS;
+    var query = "INSERT INTO TRAREALIZADOS ( RUT, IDOPERACION, PRECIO, PORCENTAJE, CANTIDAD, TOTAL, IDUNIDAD, FECHA, REVISOR ) VALUES" + DATOS;
     console.log('query ->', query);
     server_1.conex.query(query, function (err, rows, fields) {
         if (err)
