@@ -91,6 +91,24 @@ router.get('/operaciones/:obra', function (req, res) {
         res.json({ resultado: 'ok', datos: rows });
     });
 });
+router.get('/trarealizados/:fechaIni/:fechaFin', function (req, res) {
+    var query = "SELECT T.ID, T.RUT, OPE.NOMBRE, OPE.APELLIDO, OPE.APELLIDOMAT, T.IDOPERACION, OP.NOMBRE, T.IDUNIDAD, U.UNAME, U.IDNIVEL, N.NNAME, N.IDINMUEBLE, I.INAME, U.IDOBRA, O.OBRANAME, T.PRECIO, T.CANTIDAD, T.TOTAL, T.PORCENTAJE, T.REVISOR, T.FECHA FROM TRAREALIZADOS T LEFT JOIN OPERARIOS OPE ON T.RUT = OPE.RUT LEFT JOIN OPERACIONES OP ON OP.ID = T.IDOPERACION LEFT JOIN UNIDADES U ON U.CODIGO = T.IDUNIDAD LEFT JOIN NIVELES N ON N.CODIGO = U.IDINMUEBLE LEFT JOIN INMUEBLES I ON I.CODIGO = N.IDINMUEBLE LEFT JOIN OBRAS O ON O.CODIGO = U.IDOBRA";
+    console.log('query ->', query);
+    server_1.conex.query(query, function (err, rows, fields) {
+        if (err)
+            throw err;
+        res.json({ resultado: 'ok', datos: rows });
+    });
+});
+router.get('/trabajosXUnidad/:unidad', function (req, res) {
+    var query = "SELECT T.ID, T.RUT, OPE.NOMBRE, OPE.APELLIDO, OPE.APELLIDOMAT, T.IDOPERACION, OP.NOMBRE, T.IDUNIDAD, U.UNAME, U.IDNIVEL, N.NNAME, N.IDINMUEBLE, I.INAME, U.IDOBRA, O.OBRANAME, T.PRECIO, T.CANTIDAD, T.TOTAL, T.PORCENTAJE, T.REVISOR, T.FECHA FROM TRAREALIZADOS T LEFT JOIN OPERARIOS OPE ON T.RUT = OPE.RUT LEFT JOIN OPERACIONES OP ON OP.ID = T.IDOPERACION LEFT JOIN UNIDADES U ON U.CODIGO = T.IDUNIDAD LEFT JOIN NIVELES N ON N.CODIGO = U.IDINMUEBLE LEFT JOIN INMUEBLES I ON I.CODIGO = N.IDINMUEBLE LEFT JOIN OBRAS O ON O.CODIGO = U.IDOBRA WHERE T.IDUNIDAD = '" + req.params.unidad + "' ";
+    console.log('query ->', query);
+    server_1.conex.query(query, function (err, rows, fields) {
+        if (err)
+            throw err;
+        res.json({ resultado: 'ok', datos: rows });
+    });
+});
 /////=============================================/////
 /////=============================================/////
 /////=============== POST & UPDATES ==============/////
@@ -214,7 +232,7 @@ router.post('/operaxuni/:tarea', function (req, res) {
         query = "INSERT INTO OPERAXUNI (IDUNIDAD, IDOPERACION, META, PROGRESO, CREADO, ACTUALIZADO, COMPLETADO, ESTADO) VALUES ('" + req.body.IDUNIDAD + "', '" + req.body.IDOPERACION + "','" + req.body.META + "','" + req.body.PROGRESO + "', '" + req.body.CREADO + "', '" + req.body.ACTUALIZADO + "','" + req.body.COMPLETADO + "','" + req.body.ESTADO + "')";
     }
     else if (req.params.tarea === 'update') {
-        query = "UPDATE OPERAXUNI SET META = '" + req.body.META + "', IDOPERACION ='" + req.body.IDOPERACION + "', PROGRESO= '" + req.body.PROGRESO + "', REVISOR = '" + req.body.REVISOR + "', ACTUALIZADO = '" + req.body.ACTUALIZADO + "', COMPLETADO = '" + req.body.COMPLETADO + "' WHERE ID = '" + req.body.ID + "' ";
+        query = "UPDATE OPERAXUNI SET META = '" + req.body.META + "', IDOPERACION ='" + req.body.IDOPERACION + "', PROGRESO = '" + req.body.PROGRESO + "', REVISOR = '" + req.body.REVISOR + "', ACTUALIZADO = '" + req.body.ACTUALIZADO + "', COMPLETADO = '" + req.body.COMPLETADO + "' WHERE ID = '" + req.body.ID + "' ";
     }
     else if (req.params.tarea === 'borrar') {
         query = "UPDATE OPERAXUNI SET ESTADO = 0 WHERE ID = '" + req.body.ID + "' ";
