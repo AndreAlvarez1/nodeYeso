@@ -380,6 +380,32 @@ router.post('/precios/:tarea',
     });
 });
 
+
+router.post('/usuarios/:tarea', 
+
+    function(req: Request ,res: Response,) {
+    
+    console.log('precio', req.params.tarea);
+    
+    let query = '';
+
+    if (req.params.tarea === 'insert') {
+        console.log('body de imprimir', req.body);
+        query = "INSERT INTO USUARIOS ( NOMBRE, APELLIDO, EMAIL, RUT, ACCESO, ESTADO ) VALUES ('" + req.body.nombre + "', '" + req.body.apellido + "','" + req.body.email + "','" + req.body.rut + "','" + req.body.acceso + "',1)";
+    } 
+    console.log('query ->', query);
+    
+    conex.query(query, function(err:any, rows:any, fields:any) {
+        if (err) throw err;
+        res.json({ resultado: 'ok', datos: rows });
+    });
+});
+
+
+
+
+
+
 router.post('/trabajo', 
 
     function(req: Request ,res: Response,) {

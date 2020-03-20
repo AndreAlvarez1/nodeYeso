@@ -276,6 +276,20 @@ router.post('/precios/:tarea', function (req, res) {
         res.json({ resultado: 'ok', datos: rows });
     });
 });
+router.post('/usuarios/:tarea', function (req, res) {
+    console.log('precio', req.params.tarea);
+    let query = '';
+    if (req.params.tarea === 'insert') {
+        console.log('body de imprimir', req.body);
+        query = "INSERT INTO USUARIOS ( NOMBRE, APELLIDO, EMAIL, RUT, ACCESO, ESTADO ) VALUES ('" + req.body.nombre + "', '" + req.body.apellido + "','" + req.body.email + "','" + req.body.rut + "','" + req.body.acceso + "',1)";
+    }
+    console.log('query ->', query);
+    server_1.conex.query(query, function (err, rows, fields) {
+        if (err)
+            throw err;
+        res.json({ resultado: 'ok', datos: rows });
+    });
+});
 router.post('/trabajo', function (req, res) {
     console.log("Grabo trabajos", req.body);
     let DATOS = '';
