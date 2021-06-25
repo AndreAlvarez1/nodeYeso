@@ -170,7 +170,36 @@ router.get('/trabajosXUnidad/:unidad',
 
     function(req: Request ,res: Response,) {
 
-    const query = "SELECT T.ID, T.RUT, OPE.NOMBRE, OPE.APELLIDO, OPE.APELLIDOMAT, T.IDOPERACION, OP.NOMBRE AS OPERACION, OP.UNIDAD, T.IDUNIDAD, U.UNAME, U.IDNIVEL, N.NNAME, N.IDINMUEBLE, I.INAME, U.IDOBRA, O.OBRANAME, T.PRECIO, T.CANTIDAD, T.TOTAL, T.PORCENTAJE, T.REVISOR, T.FECHA FROM TRAREALIZADOS T LEFT JOIN OPERARIOS OPE ON T.RUT = OPE.RUT LEFT JOIN OPERACIONES OP ON OP.ID = T.IDOPERACION LEFT JOIN UNIDADES U ON U.CODIGO = T.IDUNIDAD LEFT JOIN NIVELES N ON N.CODIGO = U.IDNIVEL LEFT JOIN INMUEBLES I ON I.CODIGO = N.IDINMUEBLE LEFT JOIN OBRAS O ON O.CODIGO = U.IDOBRA WHERE T.IDUNIDAD = '" + req.params.unidad + "' ORDER BY T.FECHA DESC "
+    const query = "SELECT T.ID, T.RUT, OPE.NOMBRE, OPE.APELLIDO, OPE.APELLIDOMAT, T.IDOPERACION, OP.NOMBRE AS OPERACION, OP.UNIDAD, T.IDUNIDAD, U.UNAME, U.IDNIVEL, N.NNAME, N.IDINMUEBLE, I.INAME, U.IDOBRA, O.OBRANAME, T.PRECIO, T.CANTIDAD, T.TOTAL, T.PORCENTAJE, T.REVISOR, T.FECHA, T.workID FROM TRAREALIZADOS T LEFT JOIN OPERARIOS OPE ON T.RUT = OPE.RUT LEFT JOIN OPERACIONES OP ON OP.ID = T.IDOPERACION LEFT JOIN UNIDADES U ON U.CODIGO = T.IDUNIDAD LEFT JOIN NIVELES N ON N.CODIGO = U.IDNIVEL LEFT JOIN INMUEBLES I ON I.CODIGO = N.IDINMUEBLE LEFT JOIN OBRAS O ON O.CODIGO = U.IDOBRA WHERE T.IDUNIDAD = '" + req.params.unidad + "' ORDER BY T.workID DESC "
+
+    console.log('query ->', query);
+    
+    conex.query(query, function(err:any, rows:any, fields:any) {
+        if (err) throw err;
+        res.json({ resultado: 'ok', datos: rows });
+    });
+});
+
+router.get('/unidadesXnivel/:nivel', 
+
+    function(req: Request ,res: Response,) {
+
+    const query = " SELECT * FROM UNIDADES WHERE IDNIVEL = '" + req.params.nivel + "' "
+
+    console.log('query ->', query);
+    
+    conex.query(query, function(err:any, rows:any, fields:any) {
+        if (err) throw err;
+        res.json({ resultado: 'ok', datos: rows });
+    });
+});
+
+router.get('/operacionesXnivel', 
+
+    function(req: Request ,res: Response,) {
+
+    // const query = "SELECT * FROM OPERAXUNI WHERE IDUNIDAD IN ('U00024','U00023')"
+    const query = "SELECT * FROM OPERAXUNI WHERE IDUNIDAD IN ('" + req.body.unidades + "') ORDER BY IDUNIDAD "
 
     console.log('query ->', query);
     
@@ -414,20 +443,21 @@ router.post('/trabajo',
     let DATOS = '';
 
     for (let x in req.body) {
-        DATOS += "( '" + req.body[x].RUT + "'," + req.body[x].IDOPERACION + "," + req.body[x].PRECIO + "," + req.body[x].PORCENTAJE + "," + req.body[x].CANTIDAD + "," + req.body[x].TOTAL + ",'" + req.body[x].IDUNIDAD + "','" + req.body[x].FECHA +  "','" + req.body[x].REVISOR + "'),";
+        DATOS += "( '" + req.body[x].RUT + "'," + req.body[x].IDOPERACION + "," + req.body[x].PRECIO + "," + req.body[x].PORCENTAJE + "," + req.body[x].CANTIDAD + "," + req.body[x].TOTAL + ",'" + req.body[x].IDUNIDAD + "','" + req.body[x].FECHA +  "','" + req.body[x].REVISOR + "','" + req.body[x].workID + "'),";
     }
 
     DATOS = DATOS.slice(0, -1);
 
     console.log(DATOS)
 
-    const query = "INSERT INTO TRAREALIZADOS ( RUT, IDOPERACION, PRECIO, PORCENTAJE, CANTIDAD, TOTAL, IDUNIDAD, FECHA, REVISOR ) VALUES" + DATOS ;
+    const query = "INSERT INTO TRAREALIZADOS ( RUT, IDOPERACION, PRECIO, PORCENTAJE, CANTIDAD, TOTAL, IDUNIDAD, FECHA, REVISOR, workID ) VALUES" + DATOS ;
 
     console.log('query ->', query);
     
     conex.query(query, function(err:any, rows:any, fields:any) {
         if (err) throw err;
         res.json({ resultado: 'ok', datos: rows });
+
     });
 });
 
@@ -436,7 +466,8 @@ router.post('/deleteTrabajo',
     function(req: Request ,res: Response,) {
  
 
-    const query = "DELETE FROM TRAREALIZADOS WHERE IDUNIDAD = '" + req.body.IDUNIDAD + "' AND IDOPERACION = " + req.body.IDOPERACION + " AND FECHA = '" + req.body.FECHA + "' ";
+    // const query = "DELETE FROM TRAREALIZADOS WHERE IDUNIDAD = '" + req.body.IDUNIDAD + "' AND IDOPERACION = " + req.body.IDOPERACION + " AND FECHA = '" + req.body.FECHA + "' ";
+    const query = "DELETE FROM TRAREALIZADOS WHERE workID = '" + req.body.workID + "' ";
    
     console.log('query ->', query);
     
