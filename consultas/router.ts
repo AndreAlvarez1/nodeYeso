@@ -431,6 +431,23 @@ router.post('/trabajo',
     });
 });
 
+router.post('/deleteTrabajo', 
+
+    function(req: Request ,res: Response,) {
+ 
+
+    const query = "DELETE FROM TRAREALIZADOS WHERE IDUNIDAD = '" + req.body.IDUNIDAD + "' AND IDOPERACION = " + req.body.IDOPERACION + " AND FECHA = '" + req.body.FECHA + "' ";
+   
+    console.log('query ->', query);
+    
+    conex.query(query, function(err:any, rows:any, fields:any) {
+        if (err) throw err;
+        res.json({ resultado: 'ok', datos: rows });
+    });
+});
+
+
+
 
 
 router.post('/clonarOperaciones', 

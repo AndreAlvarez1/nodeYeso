@@ -306,6 +306,15 @@ router.post('/trabajo', function (req, res) {
         res.json({ resultado: 'ok', datos: rows });
     });
 });
+router.post('/deleteTrabajo', function (req, res) {
+    const query = "DELETE FROM TRAREALIZADOS WHERE IDUNIDAD = '" + req.body.IDUNIDAD + "' AND IDOPERACION = " + req.body.IDOPERACION + " AND FECHA = '" + req.body.FECHA + "' ";
+    console.log('query ->', query);
+    server_1.conex.query(query, function (err, rows, fields) {
+        if (err)
+            throw err;
+        res.json({ resultado: 'ok', datos: rows });
+    });
+});
 router.post('/clonarOperaciones', function (req, res) {
     console.log("Clonando Operaciones", req.body);
     let DATOS = '';
