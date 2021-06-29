@@ -65,7 +65,7 @@ router.get('/unidades/:obra',
 
     function(req: Request ,res: Response) {
         
-        const query = "SELECT U.CODIGO,U.UNAME, U.IDOBRA, U.IDINMUEBLE, I.INAME, U.IDNIVEL, N.NNAME, U.TIPO, U.DESCRIPCION, U.COMPLETADO  FROM UNIDADES U LEFT JOIN INMUEBLES I ON U.IDINMUEBLE = I.CODIGO LEFT JOIN NIVELES N ON U.IDNIVEL = N.CODIGO WHERE U.ESTADO = 1 && U.IDOBRA = '" + req.params.obra + "'";
+        const query = "SELECT U.CODIGO,U.UNAME, U.IDOBRA, U.IDINMUEBLE, I.INAME, U.IDNIVEL, N.NNAME, U.TIPO, U.DESCRIPCION, U.COMPLETADO, U.CLONADO  FROM UNIDADES U LEFT JOIN INMUEBLES I ON U.IDINMUEBLE = I.CODIGO LEFT JOIN NIVELES N ON U.IDNIVEL = N.CODIGO WHERE U.ESTADO = 1 && U.IDOBRA = '" + req.params.obra + "'";
     
         conex.query(query, function(err:any, rows:any, fields:any) {
         if (err) throw err;
@@ -77,7 +77,7 @@ router.get('/unidad/:obra/:unidad',
 
     function(req: Request ,res: Response) {
         
-        const query = "SELECT U.CODIGO,U.UNAME, U.IDOBRA, U.IDINMUEBLE, I.INAME, U.IDNIVEL, N.NNAME, U.TIPO, U.DESCRIPCION, U.COMPLETADO FROM UNIDADES U LEFT JOIN INMUEBLES I ON U.IDINMUEBLE = I.CODIGO LEFT JOIN NIVELES N ON U.IDNIVEL = N.CODIGO WHERE U.ESTADO = 1 && U.IDOBRA = '" + req.params.obra + "' && U.CODIGO = '" + req.params.unidad + "'  ";
+        const query = "SELECT U.CODIGO,U.UNAME, U.IDOBRA, U.IDINMUEBLE, I.INAME, U.IDNIVEL, N.NNAME, U.TIPO, U.DESCRIPCION, U.COMPLETADO, U.CLONADO FROM UNIDADES U LEFT JOIN INMUEBLES I ON U.IDINMUEBLE = I.CODIGO LEFT JOIN NIVELES N ON U.IDNIVEL = N.CODIGO WHERE U.ESTADO = 1 && U.IDOBRA = '" + req.params.obra + "' && U.CODIGO = '" + req.params.unidad + "'  ";
     
         conex.query(query, function(err:any, rows:any, fields:any) {
         if (err) throw err;
@@ -194,12 +194,28 @@ router.get('/unidadesXnivel/:nivel',
     });
 });
 
-router.get('/operacionesXnivel', 
+router.get('/unidadesIn/:unidades', 
+    function(req: Request ,res: Response,) {
+    // console.log('body', req.body)
+    // const unidades = []
+    // for (let u of req.body.unidades){
+    // }
+    const query = "SELECT * FROM UNIDADES WHERE CODIGO IN ( " + req.params.unidades + ") "
+
+    console.log('query unidadesIn ->', query);
+    
+    conex.query(query, function(err:any, rows:any, fields:any) {
+        if (err) throw err;
+        res.json({ resultado: 'ok', datos: rows });
+    });
+});
+
+router.get('/operacionesXnivel/:unidades', 
 
     function(req: Request ,res: Response,) {
 
     // const query = "SELECT * FROM OPERAXUNI WHERE IDUNIDAD IN ('U00024','U00023')"
-    const query = "SELECT * FROM OPERAXUNI WHERE IDUNIDAD IN ('" + req.body.unidades + "') ORDER BY IDUNIDAD "
+    const query = "SELECT * FROM OPERAXUNI WHERE IDUNIDAD IN (" + req.params.unidades + ") ORDER BY IDUNIDAD "
 
     console.log('query ->', query);
     
@@ -333,7 +349,7 @@ router.post('/unidades/:tarea',
 
     if (req.params.tarea === 'insert') {
         console.log('body de imprimir', req.body);
-        query = "INSERT INTO UNIDADES (CODIGO, IDOBRA, IDINMUEBLE, IDNIVEL, UNAME, TIPO, DESCRIPCION, COMPLETADO, ESTADO) VALUES ('" + req.body.CODIGO + "', '" + req.body.IDOBRA + "','" + req.body.IDINMUEBLE + "','" + req.body.IDNIVEL + "', '" + req.body.UNAME + "','" + req.body.TIPO + "','" + req.body.DESCRIPCION + "', 0, 1)";
+        query = "INSERT INTO UNIDADES (CODIGO, IDOBRA, IDINMUEBLE, IDNIVEL, UNAME, TIPO, DESCRIPCION, COMPLETADO, ESTADO, CLONADO) VALUES ('" + req.body.CODIGO + "', '" + req.body.IDOBRA + "','" + req.body.IDINMUEBLE + "','" + req.body.IDNIVEL + "', '" + req.body.UNAME + "','" + req.body.TIPO + "','" + req.body.DESCRIPCION + "', 0, 1, '" + req.body.CLONADO + "')";
     } else if (req.params.tarea === 'update'){
         query = "UPDATE UNIDADES SET UNAME = '" + req.body.UNAME + "', IDINMUEBLE ='" + req.body.IDINMUEBLE + "', IDNIVEL = '" + req.body.IDNIVEL + "', TIPO = '" + req.body.TIPO + "', ESTADO = '" + req.body.ESTADO + "' WHERE CODIGO = '" + req.body.CODIGO + "' ";
     } else if (req.params.tarea === 'borrar') {
@@ -479,6 +495,34 @@ router.post('/deleteTrabajo',
 
 
 
+router.post('/clonarUnidades', 
+
+    function(req: Request ,res: Response,) {
+    
+    console.log("Clonando Niveles", req.body)
+    let DATOS = '';
+
+    for (let x in req.body) {
+        DATOS += "( '" + req.body[x].CODIGO + "','" + req.body[x].IDOBRA + "','" + req.body[x].IDINMUEBLE + "','" + req.body[x].IDNIVEL + "','" + req.body[x].UNAME + "','" + req.body[x].TIPO + "','" + req.body[x].DESCRIPCION + "', 0, 1,'" + req.body[x].CLONADO + "'),";
+
+    }
+
+    DATOS = DATOS.slice(0, -1);
+
+    console.log(DATOS)
+
+  
+    const query = "INSERT INTO UNIDADES (CODIGO, IDOBRA, IDINMUEBLE, IDNIVEL, UNAME, TIPO, DESCRIPCION, COMPLETADO, ESTADO, CLONADO) VALUES " + DATOS
+
+    console.log('query ->', query);
+    
+    conex.query(query, function(err:any, rows:any, fields:any) {
+        if (err) throw err;
+        res.json({ resultado: 'ok', datos: rows });
+    });
+});
+
+
 
 
 router.post('/clonarOperaciones', 
@@ -490,7 +534,6 @@ router.post('/clonarOperaciones',
 
     for (let x in req.body) {
         DATOS += "( '" + req.body[x].IDUNIDAD + "','" + req.body[x].IDOPERACION + "'," + req.body[x].META + "," + req.body[x].PROGRESO + ",'" + req.body[x].CREADO + "','" + req.body[x].ACTUALIZADO + "'," + req.body[x].COMPLETADO + ",'" + req.body[x].ESTADO + "'),";
-
     }
 
     DATOS = DATOS.slice(0, -1);

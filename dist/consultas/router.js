@@ -43,7 +43,7 @@ router.get('/niveles', function (req, res) {
     });
 });
 router.get('/unidades/:obra', function (req, res) {
-    const query = "SELECT U.CODIGO,U.UNAME, U.IDOBRA, U.IDINMUEBLE, I.INAME, U.IDNIVEL, N.NNAME, U.TIPO, U.DESCRIPCION, U.COMPLETADO  FROM UNIDADES U LEFT JOIN INMUEBLES I ON U.IDINMUEBLE = I.CODIGO LEFT JOIN NIVELES N ON U.IDNIVEL = N.CODIGO WHERE U.ESTADO = 1 && U.IDOBRA = '" + req.params.obra + "'";
+    const query = "SELECT U.CODIGO,U.UNAME, U.IDOBRA, U.IDINMUEBLE, I.INAME, U.IDNIVEL, N.NNAME, U.TIPO, U.DESCRIPCION, U.COMPLETADO, U.CLONADO  FROM UNIDADES U LEFT JOIN INMUEBLES I ON U.IDINMUEBLE = I.CODIGO LEFT JOIN NIVELES N ON U.IDNIVEL = N.CODIGO WHERE U.ESTADO = 1 && U.IDOBRA = '" + req.params.obra + "'";
     server_1.conex.query(query, function (err, rows, fields) {
         if (err)
             throw err;
@@ -51,7 +51,7 @@ router.get('/unidades/:obra', function (req, res) {
     });
 });
 router.get('/unidad/:obra/:unidad', function (req, res) {
-    const query = "SELECT U.CODIGO,U.UNAME, U.IDOBRA, U.IDINMUEBLE, I.INAME, U.IDNIVEL, N.NNAME, U.TIPO, U.DESCRIPCION, U.COMPLETADO FROM UNIDADES U LEFT JOIN INMUEBLES I ON U.IDINMUEBLE = I.CODIGO LEFT JOIN NIVELES N ON U.IDNIVEL = N.CODIGO WHERE U.ESTADO = 1 && U.IDOBRA = '" + req.params.obra + "' && U.CODIGO = '" + req.params.unidad + "'  ";
+    const query = "SELECT U.CODIGO,U.UNAME, U.IDOBRA, U.IDINMUEBLE, I.INAME, U.IDNIVEL, N.NNAME, U.TIPO, U.DESCRIPCION, U.COMPLETADO, U.CLONADO FROM UNIDADES U LEFT JOIN INMUEBLES I ON U.IDINMUEBLE = I.CODIGO LEFT JOIN NIVELES N ON U.IDNIVEL = N.CODIGO WHERE U.ESTADO = 1 && U.IDOBRA = '" + req.params.obra + "' && U.CODIGO = '" + req.params.unidad + "'  ";
     server_1.conex.query(query, function (err, rows, fields) {
         if (err)
             throw err;
@@ -127,9 +127,22 @@ router.get('/unidadesXnivel/:nivel', function (req, res) {
         res.json({ resultado: 'ok', datos: rows });
     });
 });
-router.get('/operacionesXnivel', function (req, res) {
+router.get('/unidadesIn/:unidades', function (req, res) {
+    // console.log('body', req.body)
+    // const unidades = []
+    // for (let u of req.body.unidades){
+    // }
+    const query = "SELECT * FROM UNIDADES WHERE CODIGO IN ( " + req.params.unidades + ") ";
+    console.log('query unidadesIn ->', query);
+    server_1.conex.query(query, function (err, rows, fields) {
+        if (err)
+            throw err;
+        res.json({ resultado: 'ok', datos: rows });
+    });
+});
+router.get('/operacionesXnivel/:unidades', function (req, res) {
     // const query = "SELECT * FROM OPERAXUNI WHERE IDUNIDAD IN ('U00024','U00023')"
-    const query = "SELECT * FROM OPERAXUNI WHERE IDUNIDAD IN ('" + req.body.unidades + "') ORDER BY IDUNIDAD ";
+    const query = "SELECT * FROM OPERAXUNI WHERE IDUNIDAD IN (" + req.params.unidades + ") ORDER BY IDUNIDAD ";
     console.log('query ->', query);
     server_1.conex.query(query, function (err, rows, fields) {
         if (err)
@@ -231,7 +244,7 @@ router.post('/unidades/:tarea', function (req, res) {
     let query = '';
     if (req.params.tarea === 'insert') {
         console.log('body de imprimir', req.body);
-        query = "INSERT INTO UNIDADES (CODIGO, IDOBRA, IDINMUEBLE, IDNIVEL, UNAME, TIPO, DESCRIPCION, COMPLETADO, ESTADO) VALUES ('" + req.body.CODIGO + "', '" + req.body.IDOBRA + "','" + req.body.IDINMUEBLE + "','" + req.body.IDNIVEL + "', '" + req.body.UNAME + "','" + req.body.TIPO + "','" + req.body.DESCRIPCION + "', 0, 1)";
+        query = "INSERT INTO UNIDADES (CODIGO, IDOBRA, IDINMUEBLE, IDNIVEL, UNAME, TIPO, DESCRIPCION, COMPLETADO, ESTADO, CLONADO) VALUES ('" + req.body.CODIGO + "', '" + req.body.IDOBRA + "','" + req.body.IDINMUEBLE + "','" + req.body.IDNIVEL + "', '" + req.body.UNAME + "','" + req.body.TIPO + "','" + req.body.DESCRIPCION + "', 0, 1, '" + req.body.CLONADO + "')";
     }
     else if (req.params.tarea === 'update') {
         query = "UPDATE UNIDADES SET UNAME = '" + req.body.UNAME + "', IDINMUEBLE ='" + req.body.IDINMUEBLE + "', IDNIVEL = '" + req.body.IDNIVEL + "', TIPO = '" + req.body.TIPO + "', ESTADO = '" + req.body.ESTADO + "' WHERE CODIGO = '" + req.body.CODIGO + "' ";
@@ -328,6 +341,22 @@ router.post('/trabajo', function (req, res) {
 router.post('/deleteTrabajo', function (req, res) {
     // const query = "DELETE FROM TRAREALIZADOS WHERE IDUNIDAD = '" + req.body.IDUNIDAD + "' AND IDOPERACION = " + req.body.IDOPERACION + " AND FECHA = '" + req.body.FECHA + "' ";
     const query = "DELETE FROM TRAREALIZADOS WHERE workID = '" + req.body.workID + "' ";
+    console.log('query ->', query);
+    server_1.conex.query(query, function (err, rows, fields) {
+        if (err)
+            throw err;
+        res.json({ resultado: 'ok', datos: rows });
+    });
+});
+router.post('/clonarUnidades', function (req, res) {
+    console.log("Clonando Niveles", req.body);
+    let DATOS = '';
+    for (let x in req.body) {
+        DATOS += "( '" + req.body[x].CODIGO + "','" + req.body[x].IDOBRA + "','" + req.body[x].IDINMUEBLE + "','" + req.body[x].IDNIVEL + "','" + req.body[x].UNAME + "','" + req.body[x].TIPO + "','" + req.body[x].DESCRIPCION + "', 0, 1,'" + req.body[x].CLONADO + "'),";
+    }
+    DATOS = DATOS.slice(0, -1);
+    console.log(DATOS);
+    const query = "INSERT INTO UNIDADES (CODIGO, IDOBRA, IDINMUEBLE, IDNIVEL, UNAME, TIPO, DESCRIPCION, COMPLETADO, ESTADO, CLONADO) VALUES " + DATOS;
     console.log('query ->', query);
     server_1.conex.query(query, function (err, rows, fields) {
         if (err)
